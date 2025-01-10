@@ -10,7 +10,7 @@ const produtoSchema = z.object({
   preco: z.number().positive(),
 });
 
-const identificadorDoProdutoSchema = z.string().uuid();
+const identificadorDoProdutoSchema = z.object({ id: z.string().uuid() });
 
 export async function rotasDeProdutos(fastify: FastifyInstance) {
   fastify.get("/", async (_, reply) => {
@@ -30,9 +30,11 @@ export async function rotasDeProdutos(fastify: FastifyInstance) {
 
   fastify.get("/:id", async (request, reply) => {
     try {
+      console.log("Entrou aqui");
       const idDoProduto = identificadorDoProdutoSchema.parse(request.params);
+      console.log(idDoProduto);
       const produto = await prisma.produtos.findFirst({
-        where: { id: idDoProduto },
+        where: { id: idDoProduto.id },
       });
       reply.code(200).send(produto);
     } catch (erro) {
@@ -48,7 +50,7 @@ export async function rotasDeProdutos(fastify: FastifyInstance) {
       const produtoAtualizado = produtoSchema.parse(request.body);
 
       await prisma.produtos.update({
-        where: { id: idDoProduto },
+        where: { id: idDoProduto.id },
         data: produtoAtualizado,
       });
       reply.code(203);
