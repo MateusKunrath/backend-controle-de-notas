@@ -30,9 +30,7 @@ export async function rotasDeProdutos(fastify: FastifyInstance) {
 
   fastify.get("/:id", async (request, reply) => {
     try {
-      console.log("Entrou aqui");
       const idDoProduto = identificadorDoProdutoSchema.parse(request.params);
-      console.log(idDoProduto);
       const produto = await prisma.produtos.findFirst({
         where: { id: idDoProduto.id },
       });
