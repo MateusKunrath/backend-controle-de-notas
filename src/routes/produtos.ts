@@ -10,6 +10,8 @@ const produtoSchema = z.object({
   preco: z.number().positive(),
 });
 
+const identificadorDoProdutoSchema = z.string().uuid();
+
 export async function rotasDeProdutos(fastify: FastifyInstance) {
   fastify.get("/", async (_, reply) => {
     const produtos = await prisma.produtos.findMany();
@@ -23,6 +25,20 @@ export async function rotasDeProdutos(fastify: FastifyInstance) {
       reply.code(201).send(produto);
     } catch (erro) {
       reply.code(400).send({ mensagem: "Erro ao adicionar produto", erro });
+    }
+  });
+
+  fastify.get("/:id", async (request, reply) => {
+    try {
+      const idDoProduto = identificadorDoProdutoSchema.parse(request.params);
+      const produto = await prisma.produtos.findFirst({
+        where: { id: idDoProduto },
+      });
+      reply.code(200).send(produto);
+    } catch (erro) {
+      reply
+        .code(400)
+        .send({ mensagem: "Falha ao obter informações do produto", erro });
     }
   });
 }
