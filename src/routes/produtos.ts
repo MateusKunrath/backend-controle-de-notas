@@ -41,4 +41,19 @@ export async function rotasDeProdutos(fastify: FastifyInstance) {
         .send({ mensagem: "Falha ao obter informações do produto", erro });
     }
   });
+
+  fastify.put("/:id", async (request, reply) => {
+    try {
+      const idDoProduto = identificadorDoProdutoSchema.parse(request.params);
+      const produtoAtualizado = produtoSchema.parse(request.body);
+
+      await prisma.produtos.update({
+        where: { id: idDoProduto },
+        data: produtoAtualizado,
+      });
+      reply.code(203);
+    } catch (erro) {
+      reply.code(400).send(erro);
+    }
+  });
 }
