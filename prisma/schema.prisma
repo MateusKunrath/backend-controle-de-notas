@@ -1,0 +1,21 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Produtos {
+  id        String  @id @default(uuid())
+  descricao String
+  unidade   Unidade
+  preco     Float
+}
+
+enum Unidade {
+  Kilo
+  Litro
+  Caixa
+}
